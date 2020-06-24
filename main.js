@@ -1,36 +1,50 @@
 
-//   ,--.  ,--.         ,--.                                                        ,--.                 
-// ,-'  '-.|  |,--.--.,-'  '-.    ,--.--. ,--,--.,--. ,--.     ,---. ,--,--. ,---.,-'  '-. ,---. ,--.--. 
-// '-.  .-'|  ||  .--''-.  .-'    |  .--'' ,-.  | \  '  /     | .--'' ,-.  |(  .-''-.  .-'| .-. :|  .--' 
-//   |  |  |  ||  |     |  |      |  |   \ '-'  |  \   '      \ `--.\ '-'  |.-'  `) |  |  \   --.|  |    
-//   `--'  `--'`--'     `--'      `--'    `--`--'.-'  /        `---' `--`--'`----'  `--'   `----'`--'    
-//                                               `---'                                                   
+let walls = [];
+let wall_count = 10;
+let ray;
+let agent, mouse;
+let xoff = 20;
+let yoff = 1234;
 
-let walls = []
 function setup() {
     createCanvas(innerWidth, innerHeight);
-    for (let i = 0; i < 1; i++) {
-        let p1 = createVector(random(width), random(height));
-        let p2 = createVector(random(width), random(height));
-        walls.push({
-            p1, p2, c: "#" + ((1 << 24) * Math.random() | 0).toString(16)
-        })
+    for (let i = 0; i < wall_count; i++) {
+        let x1 = random(width);
+        let x2 = random(width);
+        let y1 = random(height);
+        let y2 = random(height);
+        walls[i] = new Boundary(x1, y1, x2, y2);
     }
+    walls.push(new Boundary(-1, -1, width, -1));
+    walls.push(new Boundary(width, -1, width, height));
+    walls.push(new Boundary(width, height, -1, height));
+    walls.push(new Boundary(-1, height, -1, -1));
+    agent = new Particle();
+    mouse = new Particle();
 }
 
 function draw() {
-    background("black")
-    let p = new Particle()
-    for (let i = 0; i < walls.length; i++) {
-        const { p1, p2, c } = walls[i];
-        push()
-        stroke("white")
-        strokeWeight(5)
-        line(p1.x, p1.y, p2.x, p2.y)
-        p.draw(p1, p2);
-        pop()
+    background(0);
+    for (let [i, wall] of walls.entries()) {
+        wall.show();
+        if (i < walls.length - 4) {
+            wall.update();
+        }
+
     }
+    //agent.update(noise(xoff * .3) * width, noise(yoff) * height);
+    agent.update(mouseX, mouseY);
+    agent.look(walls);
+    mouse.update(noise(xoff) * width * .9, noise(yoff) * height);
+    mouse.look(walls);
+
+    xoff += 0.01;
+    yoff += 0.01;
 }
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
+    walls[walls.length - 1] = (new Boundary(-1, -1, windowWidth, -1));
+    walls[walls.length - 2] = (new Boundary(windowWidth, -1, windowWidth, windowHeight));
+    walls[walls.length - 3] = (new Boundary(windowWidth, windowHeight, -1, windowHeight));
+    walls[walls.length - 4] = (new Boundary(-1, windowHeight, -1, -1));
 }

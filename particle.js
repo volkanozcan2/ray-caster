@@ -1,16 +1,38 @@
-class Particle {
-    constructor(x, y) {
-        this.pos = createVector(x, y);
-    }
-    draw(p1, p2) {
-        for (let i = 0; i < 360; i += 0.2) {
-            this.v = p5.Vector.fromAngle(radians(i))
-            this.v.mult(2000);
-            let hit = collideLineLine(p1.x, p1.y, p2.x, p2.y, mouseX, mouseY, mouseX + this.v.x, mouseY + this.v.y);
-            if (hit) {
-                line(mouseX, mouseY, mouseX + this.v.x, mouseY + this.v.y)
-            }
 
+class Particle {
+    constructor() {
+        this.pos = createVector(width / 2, height / 2);
+        this.rays = [];
+        for (let a = 0; a < 360; a += 1) {
+            this.rays.push(new Ray(this.pos, radians(a)));
         }
     }
+
+    update(x, y) {
+        this.pos.set(x, y);
+    }
+
+    look(walls) {
+        for (let i = 0; i < this.rays.length; i++) {
+            const ray = this.rays[i];
+            let closest = null;
+            let record = Infinity;
+            for (let wall of walls) {
+                const pt = ray.cast(wall);
+                if (pt) {
+                    const d = p5.Vector.dist(this.pos, pt);
+                    if (d < record) {
+                        record = d;
+                        closest = pt;
+                    }
+                }
+            }
+            if (closest) {
+                stroke(255, 100);
+                line(this.pos.x, this.pos.y, closest.x, closest.y);
+            }
+        }
+    }
+
+
 }
