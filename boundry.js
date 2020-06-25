@@ -14,7 +14,6 @@ class Boundary {
         this.b.lerp(this.target.t2, 0.01);
         if (this.b.dist(this.target.t2) < 11) {
             this.target = { t1: createVector(random(width), random(height)), t2: createVector(random(width), random(height)) }
-            console.log("dist")
         }
     }
 }
