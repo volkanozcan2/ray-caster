@@ -1,4 +1,4 @@
-
+console.log("naber")
 let walls = [];
 let wall_count = 10;
 let ray;
