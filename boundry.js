@@ -4,7 +4,6 @@ class Boundary {
         this.b = createVector(x2, y2);
         this.target = { t1: createVector(random(width), random(height)), t2: createVector(random(width), random(height)) }
     }
-
     show() {
         stroke(255);
         line(this.a.x, this.a.y, this.b.x, this.b.y);
