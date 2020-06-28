@@ -1,4 +1,3 @@
-
 class Ray {
     constructor(pos, angle) {
         this.pos = pos;
